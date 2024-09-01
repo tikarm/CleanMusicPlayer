@@ -17,3 +17,7 @@ rootProject.name = "MusicPlayer"
 include(":app")
 include(":core")
 include(":features")
+include(":data")
+include(":data:local")
+include(":data:device")
+include(":song-model")
