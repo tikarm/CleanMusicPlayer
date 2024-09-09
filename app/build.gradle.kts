@@ -81,9 +81,15 @@ dependencies {
     implementation(Navigation.navigationCompose)
     implementation(Serialization.kotlinSerialization)
 
+    implementation(project(Modules.core))
+    implementation(project(Modules.coreUi))
+    implementation(project(Modules.songListPresentation))
+    implementation(project(Modules.songListData))
+    implementation(project(Modules.songListDomain))
+
     implementation(project(Modules.dataLocal))
     implementation(project(Modules.dataDevice))
-    implementation(project(Modules.core))
+    implementation(project(Modules.player))
     implementation(project(Modules.songModel))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
