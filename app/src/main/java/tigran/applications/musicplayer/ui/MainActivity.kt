@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
         permissionManager.initializePermissionLauncher()
 
-        permissionManager.requestAudioPermission()
+        permissionManager.requestPermissions()
     }
 
     private fun setContent() {
