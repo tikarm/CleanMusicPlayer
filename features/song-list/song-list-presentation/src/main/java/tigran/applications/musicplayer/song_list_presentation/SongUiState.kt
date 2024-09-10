@@ -5,5 +5,6 @@ data class SongUiState(
     val title: String = "",
     val artist: String? = "",
     val album: String? = "",
-    val albumArtUri: String? = null
+    val albumArtUri: String? = null,
+    var isPlaying: Boolean? = false
 )

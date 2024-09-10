@@ -7,9 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import tigran.applications.musicplayer.song_model.SongModel
 import tigran.applications.musicplayer.song_list_domain.use_cases.GetSongsUseCase
 import tigran.applications.musicplayer.song_list_domain.use_cases.PlaySongUseCase
+import tigran.applications.musicplayer.song_model.SongModel
 import javax.inject.Inject
 
 
@@ -19,7 +19,10 @@ class SongListViewModel @Inject constructor(
     private val playSongUseCase: PlaySongUseCase,
 ) : ViewModel() {
 
-    private var songList: List<tigran.applications.musicplayer.song_model.SongModel> = emptyList()
+    private var songList: List<SongModel> = emptyList()
+
+    private val _currentSongUiState = MutableStateFlow<SongUiState?>(null)
+    val currentSongUiState = _currentSongUiState.asStateFlow()
 
     private val _songListUiState = MutableStateFlow(listOf<SongUiState>())
     val songListUiState = _songListUiState.asStateFlow()
@@ -31,12 +34,38 @@ class SongListViewModel @Inject constructor(
         }
     }
 
-    fun playSong(songId: String) {
-        val songToPlay = songList.first { it.id == songId }
-        songToPlay.contentUri?.let { playSongUseCase.invoke(it) }
+    fun onSongClicked(songUiState: SongUiState) {
+        if(_currentSongUiState.value?.id == songUiState.id) {
+            if(_currentSongUiState.value?.isPlaying == true) {
+                pauseSong()
+            } else {
+                resumeSong()
+            }
+            _currentSongUiState.value = _currentSongUiState.value?.copy(
+                isPlaying = !_currentSongUiState.value?.isPlaying!!
+            )
+        } else {
+            playSong(songUiState.id)
+            _currentSongUiState.value = songUiState.copy(
+                isPlaying = true
+            )
+        }
     }
 
-    private fun tigran.applications.musicplayer.song_model.SongModel.toSongUiState(): SongUiState {
+    private fun playSong(songId: String) {
+        val songToPlay = songList.first { it.id == songId }
+        songToPlay.contentUri?.let { playSongUseCase.startSong(it) }
+    }
+
+    private fun pauseSong() {
+        playSongUseCase.pauseSong()
+    }
+
+    private fun resumeSong() {
+        playSongUseCase.resumeSong()
+    }
+
+    private fun SongModel.toSongUiState(): SongUiState {
         return SongUiState(
             id = id,
             title = title,

@@ -6,7 +6,15 @@ import javax.inject.Inject
 
 class PlaySongUseCase @Inject constructor(private val audioPlayer: AudioPlayer) {
 
-    operator fun invoke(songUri: String) {
+    fun startSong(songUri: String) {
         audioPlayer.play(songUri.toUri())
+    }
+
+    fun pauseSong() {
+        audioPlayer.pause()
+    }
+
+    fun resumeSong() {
+        audioPlayer.resume()
     }
 }

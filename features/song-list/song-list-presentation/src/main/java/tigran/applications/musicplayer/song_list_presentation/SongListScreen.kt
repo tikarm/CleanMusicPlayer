@@ -1,8 +1,10 @@
 package tigran.applications.musicplayer.song_list_presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,12 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.tigran.applications.MusicPlayer.song_list.presentation.R
 import tigran.applications.core.util.UiEvent
+import tigran.applications.musicplayer.core_ui.theme.defaultTextColor
 
 
 @Composable
@@ -30,13 +36,23 @@ fun SongListScreen(
     songListViewModel: SongListViewModel = hiltViewModel()
 ) {
     val songListUiState by songListViewModel.songListUiState.collectAsStateWithLifecycle()
+    val currentPlayingSongUiState by songListViewModel.currentSongUiState.collectAsStateWithLifecycle()
 
     LazyColumn {
         items(songListUiState.size) { index: Int ->
-            val songUiState = songListUiState[index]
+            var songUiState = songListUiState[index]
 
+            songUiState = if (songUiState.id == currentPlayingSongUiState?.id) {
+                songUiState.copy(
+                    isPlaying = currentPlayingSongUiState?.isPlaying ?: false
+                )
+            } else {
+                songUiState.copy(
+                    isPlaying = null
+                )
+            }
             SongItem(songUiState) {
-                songListViewModel.playSong(songUiState.id)
+                songListViewModel.onSongClicked(songUiState)
             }
         }
     }
@@ -47,7 +63,13 @@ fun SongItem(
     songUiState: SongUiState,
     onSongClicked: () -> Unit
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onSongClicked()
+            }
+    ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(songUiState.albumArtUri)
@@ -62,13 +84,27 @@ fun SongItem(
         Column(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .clickable {
-                    onSongClicked()
-                }
         ) {
-            Text(text = songUiState.title)
+            Text(
+                text = songUiState.title,
+                fontSize = 16.sp
+            )
 
-            Text(text = songUiState.artist ?: "")
+            Text(
+                text = songUiState.artist ?: "",
+                color = defaultTextColor,
+                fontSize = 14.sp
+            )
+        }
+        if (songUiState.isPlaying != null) {
+            Spacer(modifier = Modifier.weight(1f))
+            Image(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                painter = if (songUiState.isPlaying!!)
+                    painterResource(id = R.drawable.ic_pause) else
+                    painterResource(id = R.drawable.ic_play),
+                contentDescription = null
+            )
         }
     }
 }
