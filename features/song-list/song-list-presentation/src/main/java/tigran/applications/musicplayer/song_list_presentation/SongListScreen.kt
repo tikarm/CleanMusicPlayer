@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.tigran.applications.MusicPlayer.song_list.presentation.R
+import tigran.applications.core.SongInteractor
 import tigran.applications.core.util.UiEvent
 import tigran.applications.musicplayer.core_ui.theme.defaultTextColor
 
@@ -33,18 +34,18 @@ import tigran.applications.musicplayer.core_ui.theme.defaultTextColor
 @Composable
 fun SongListScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
-    songListViewModel: SongListViewModel = hiltViewModel()
+    songListViewModel: SongListViewModel = hiltViewModel(),
 ) {
     val songListUiState by songListViewModel.songListUiState.collectAsStateWithLifecycle()
-    val currentPlayingSongUiState by songListViewModel.currentSongUiState.collectAsStateWithLifecycle()
+    val currentPlayingSong by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle()
 
     LazyColumn {
         items(songListUiState.size) { index: Int ->
             var songUiState = songListUiState[index]
 
-            songUiState = if (songUiState.id == currentPlayingSongUiState?.id) {
+            songUiState = if (songUiState.id == currentPlayingSong?.first) {
                 songUiState.copy(
-                    isPlaying = currentPlayingSongUiState?.isPlaying ?: false
+                    isPlaying = currentPlayingSong?.second ?: false
                 )
             } else {
                 songUiState.copy(

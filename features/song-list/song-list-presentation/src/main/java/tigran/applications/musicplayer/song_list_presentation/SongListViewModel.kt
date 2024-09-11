@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import tigran.applications.core.SongInteractor
 import tigran.applications.musicplayer.song_list_domain.use_cases.GetSongsUseCase
 import tigran.applications.musicplayer.song_list_domain.use_cases.PlaySongUseCase
 import tigran.applications.musicplayer.song_model.SongModel
@@ -21,9 +22,6 @@ class SongListViewModel @Inject constructor(
 
     private var songList: List<SongModel> = emptyList()
 
-    private val _currentSongUiState = MutableStateFlow<SongUiState?>(null)
-    val currentSongUiState = _currentSongUiState.asStateFlow()
-
     private val _songListUiState = MutableStateFlow(listOf<SongUiState>())
     val songListUiState = _songListUiState.asStateFlow()
 
@@ -35,26 +33,22 @@ class SongListViewModel @Inject constructor(
     }
 
     fun onSongClicked(songUiState: SongUiState) {
-        if(_currentSongUiState.value?.id == songUiState.id) {
-            if(_currentSongUiState.value?.isPlaying == true) {
+        val currentPlayingSongInfo = SongInteractor.currentPlayingSongInfo.value
+
+        if (currentPlayingSongInfo?.first == songUiState.id) {
+            if (currentPlayingSongInfo.second) {
                 pauseSong()
             } else {
                 resumeSong()
             }
-            _currentSongUiState.value = _currentSongUiState.value?.copy(
-                isPlaying = !_currentSongUiState.value?.isPlaying!!
-            )
         } else {
             playSong(songUiState.id)
-            _currentSongUiState.value = songUiState.copy(
-                isPlaying = true
-            )
         }
     }
 
     private fun playSong(songId: String) {
         val songToPlay = songList.first { it.id == songId }
-        songToPlay.contentUri?.let { playSongUseCase.startSong(it) }
+        songToPlay.contentUri?.let { playSongUseCase.startSong(songToPlay) }
     }
 
     private fun pauseSong() {

@@ -1,13 +1,15 @@
 package tigran.applications.musicplayer.player
 
-import android.app.Notification
 import android.app.Service
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
-import com.tigran.applications.MusicPlayer.player.R
+import tigran.applications.core.SongInteractor
+import tigran.applications.musicplayer.song_model.SongModel
 
 class MusicService : Service() {
 
@@ -15,6 +17,7 @@ class MusicService : Service() {
         const val SERVICE_NOTIFICATION_ID = 1
         const val CHANNEL_ID = "music_channel_id"
 
+        const val SONG_EXTRA = "SONG_EXTRA"
         const val SONG_URI_EXTRA = "SONG_URI_EXTRA"
 
         const val PLAY_SONG_ACTION = "PLAY_SONG_ACTION"
@@ -25,13 +28,45 @@ class MusicService : Service() {
 
     private var mediaPlayer = MediaPlayer()
 
+    private var currentSong: SongModel? = null
+    val songNotification = SongNotification(this)
+
+    private val musicActionReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                PAUSE_SONG_ACTION -> pausePlayback()
+                RESUME_SONG_ACTION -> resumePlayback()
+                STOP_SONG_ACTION -> stopPlayback()
+            }
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        registerReceiver(musicActionReceiver,
+            IntentFilter().apply {
+                addAction(PLAY_SONG_ACTION)
+                addAction(PAUSE_SONG_ACTION)
+                addAction(RESUME_SONG_ACTION)
+                addAction(STOP_SONG_ACTION)
+            }
+        )
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val action = intent?.action
-        val songUri = intent?.getStringExtra(SONG_URI_EXTRA)?.let { Uri.parse(it) }
 
         when (action) {
             PLAY_SONG_ACTION -> {
-                songUri?.let { playSong(it) }
+                val receivedBundle = intent.getBundleExtra(SONG_URI_EXTRA)
+                currentSong = receivedBundle?.getParcelable(SONG_EXTRA)!!
+                if (currentSong != null) {
+                    playSong(Uri.parse(currentSong!!.contentUri))
+                    startForeground(
+                        SERVICE_NOTIFICATION_ID,
+                        songNotification.createNotification(currentSong!!)
+                    )
+                }
             }
 
             STOP_SONG_ACTION -> {
@@ -47,13 +82,12 @@ class MusicService : Service() {
             }
         }
 
-        startForeground(SERVICE_NOTIFICATION_ID, createNotification())
-
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
         stopPlayback()
+        unregisterReceiver(musicActionReceiver)
         super.onDestroy()
     }
 
@@ -64,6 +98,7 @@ class MusicService : Service() {
             prepare()
             start()
         }
+        setCurrentPlayingSongState(true)
     }
 
     private fun stopPlayback() {
@@ -71,6 +106,7 @@ class MusicService : Service() {
             stop()
             reset()
         }
+        setCurrentPlayingSongState(false)
     }
 
     private fun pausePlayback() {
@@ -79,6 +115,7 @@ class MusicService : Service() {
                 pause()
             }
         }
+        setCurrentPlayingSongState(false)
     }
 
     private fun resumePlayback() {
@@ -87,18 +124,16 @@ class MusicService : Service() {
                 start()
             }
         }
+        setCurrentPlayingSongState(true)
+    }
+
+    private fun setCurrentPlayingSongState(isPlaying: Boolean) {
+        SongInteractor.setSongIsPlaying(currentSong?.id!!, isPlaying)
+        songNotification.updateNotification(currentSong!!, isPlaying)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
-    }
-
-    private fun createNotification(): Notification {
-        return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Music Playing")
-            .setContentText("Song is playing")
-            .setSmallIcon(R.drawable.ic_music_note)
-            .build()
     }
 }
 

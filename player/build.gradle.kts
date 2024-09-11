@@ -14,4 +14,5 @@ android {
 
 dependencies {
     implementation(project(Modules.songModel))
+    implementation(project(Modules.core))
 }

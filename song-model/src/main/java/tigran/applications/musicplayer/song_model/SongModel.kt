@@ -1,5 +1,9 @@
 package tigran.applications.musicplayer.song_model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class SongModel(
     val id: String,
     val title: String,
@@ -7,4 +11,4 @@ data class SongModel(
     val album: String?,
     val albumArtUri: String?,
     val contentUri: String?,
-)
+) : Parcelable
