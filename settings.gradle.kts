@@ -30,3 +30,7 @@ include(":features:song-list:song-list-domain")
 include(":features:song-list:song-list-data")
 
 include(":player")
+include(":features:current-song")
+include(":features:current-song:current-song-presentation")
+include(":features:current-song:current-song-domain")
+include(":features:current-song:current-song-data")
