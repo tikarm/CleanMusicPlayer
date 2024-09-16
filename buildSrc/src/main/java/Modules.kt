@@ -5,6 +5,7 @@ object Modules {
 
     const val dataLocal = ":data:local"
     const val dataDevice = ":data:device"
+    const val domain = ":domain"
 
     const val songListPresentation = ":features:song-list:song-list-presentation"
     const val songListDomain = ":features:song-list:song-list-domain"
@@ -16,4 +17,5 @@ object Modules {
 
     const val player = ":player"
     const val songModel = ":song-model"
+    const val songUiState = ":song-ui-state"
 }

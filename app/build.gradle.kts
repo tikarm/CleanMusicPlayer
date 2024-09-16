@@ -94,8 +94,10 @@ dependencies {
 
     implementation(project(Modules.dataLocal))
     implementation(project(Modules.dataDevice))
+    implementation(project(Modules.domain))
     implementation(project(Modules.player))
     implementation(project(Modules.songModel))
+    implementation(project(Modules.songUiState))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

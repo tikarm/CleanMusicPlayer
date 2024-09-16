@@ -16,4 +16,6 @@ dependencies {
     implementation(project(Modules.coreUi))
     implementation(project(Modules.currentSongDomain))
     implementation(project(Modules.songModel))
+    implementation(project(Modules.songUiState))
+    implementation(project(Modules.domain))
 }

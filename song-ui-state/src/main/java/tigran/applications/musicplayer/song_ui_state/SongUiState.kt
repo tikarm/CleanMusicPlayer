@@ -1,4 +1,4 @@
-package tigran.applications.musicplayer.song_list_presentation
+package tigran.applications.musicplayer.song_ui_state
 
 data class SongUiState(
     val id: String,

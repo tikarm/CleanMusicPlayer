@@ -33,6 +33,7 @@ import tigran.applications.core.SongInteractor
 import tigran.applications.core.util.UiEvent
 import tigran.applications.musicplayer.core_ui.theme.defaultTextColor
 import tigran.applications.musicplayer.core_ui.util.shimmerEffect
+import tigran.applications.musicplayer.song_ui_state.SongUiState
 
 
 @Composable
@@ -41,7 +42,7 @@ fun SongListScreen(
     songListViewModel: SongListViewModel = hiltViewModel(),
 ) {
     val songListUiState by songListViewModel.songListUiState.collectAsStateWithLifecycle()
-    val currentPlayingSong by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle()
+    val currentPlayingSong by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle(null)
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (songListUiState.isEmpty()) {
@@ -61,7 +62,7 @@ fun SongListScreen(
                         )
                     }
                     SongItem(songUiState) {
-                        songListViewModel.onSongClicked(songUiState)
+                        songListViewModel.onSongClicked(songUiState, currentPlayingSong)
                     }
                 }
             }

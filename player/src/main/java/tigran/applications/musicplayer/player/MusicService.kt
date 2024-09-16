@@ -8,6 +8,9 @@ import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import tigran.applications.core.SongInteractor
 import tigran.applications.musicplayer.song_model.SongModel
 
@@ -128,8 +131,10 @@ class MusicService : Service() {
     }
 
     private fun setCurrentPlayingSongState(isPlaying: Boolean) {
-        SongInteractor.setSongIsPlaying(currentSong?.id!!, isPlaying)
-        songNotification.updateNotification(currentSong!!, isPlaying)
+        CoroutineScope(Dispatchers.IO).launch {
+            SongInteractor.setSongIsPlaying(currentSong?.id!!, isPlaying)
+            songNotification.updateNotification(currentSong!!, isPlaying)
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {

@@ -2,10 +2,8 @@ package tigran.applications.musicplayer.player
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import dagger.hilt.android.qualifiers.ApplicationContext
 import tigran.applications.musicplayer.player.MusicService.Companion.PAUSE_SONG_ACTION
 import tigran.applications.musicplayer.player.MusicService.Companion.PLAY_SONG_ACTION
@@ -15,7 +13,9 @@ import tigran.applications.musicplayer.player.MusicService.Companion.SONG_URI_EX
 import tigran.applications.musicplayer.player.MusicService.Companion.STOP_SONG_ACTION
 import tigran.applications.musicplayer.song_model.SongModel
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AudioPlayer @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
