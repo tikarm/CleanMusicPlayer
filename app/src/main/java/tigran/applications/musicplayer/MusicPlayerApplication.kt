@@ -5,7 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import dagger.hilt.android.HiltAndroidApp
-import tigran.applications.musicplayer.player.MusicService.Companion.CHANNEL_ID
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.CHANNEL_ID
 
 @HiltAndroidApp
 class MusicPlayerApplication : Application() {

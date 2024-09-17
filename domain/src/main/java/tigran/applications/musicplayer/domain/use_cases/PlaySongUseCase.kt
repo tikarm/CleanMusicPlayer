@@ -1,6 +1,6 @@
 package tigran.applications.musicplayer.domain.use_cases
 
-import tigran.applications.musicplayer.player.AudioPlayer
+import tigran.applications.musicplayer.player_interaction.AudioPlayer
 import tigran.applications.musicplayer.song_model.SongModel
 import javax.inject.Inject
 

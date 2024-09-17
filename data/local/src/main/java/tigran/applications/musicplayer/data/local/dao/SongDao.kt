@@ -13,7 +13,10 @@ interface SongDao {
     fun getAll(): List<SongEntity>
 
     @Query("SELECT * FROM songs WHERE id =:id")
-    fun getSongById(id: Long): SongEntity
+    fun getSongById(id: String): SongEntity
+
+    @Query("SELECT * FROM songs WHERE position =:position")
+    fun getSongByPosition(position: Int): SongEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(song: SongEntity): Long
@@ -25,5 +28,5 @@ interface SongDao {
     fun update(song: SongEntity)
 
     @Query("DELETE FROM songs WHERE id =:id")
-    fun remove(id: Long)
+    fun remove(id: String)
 }

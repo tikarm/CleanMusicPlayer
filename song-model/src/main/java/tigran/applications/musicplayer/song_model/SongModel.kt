@@ -11,4 +11,5 @@ data class SongModel(
     val album: String?,
     val albumArtUri: String?,
     val contentUri: String?,
+    val position: Int
 ) : Parcelable

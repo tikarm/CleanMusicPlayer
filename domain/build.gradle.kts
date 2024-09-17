@@ -13,6 +13,6 @@ android {
 
 dependencies {
     implementation(project(Modules.core))
-    implementation(project(Modules.player))
+    implementation(project(Modules.playerInteraction))
     implementation(project(Modules.songModel))
 }

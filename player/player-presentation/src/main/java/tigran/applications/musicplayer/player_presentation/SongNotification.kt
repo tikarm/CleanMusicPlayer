@@ -1,4 +1,4 @@
-package tigran.applications.musicplayer.player
+package tigran.applications.musicplayer.player_presentation
 
 import android.app.Notification
 import android.app.NotificationManager
@@ -7,13 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.tigran.applications.MusicPlayer.player.R
-import tigran.applications.musicplayer.player.MusicService.Companion.CHANNEL_ID
-import tigran.applications.musicplayer.player.MusicService.Companion.PAUSE_SONG_ACTION
-import tigran.applications.musicplayer.player.MusicService.Companion.RESUME_SONG_ACTION
+import com.tigran.applications.MusicPlayer.player.presentation.R
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.CHANNEL_ID
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.NEXT_SONG_ACTION
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.NOTIFICATION_ID
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.PAUSE_SONG_ACTION
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.RESUME_SONG_ACTION
 import tigran.applications.musicplayer.song_model.SongModel
-
-private const val NOTIFICATION_ID = 1
 
 class SongNotification(
     private val context: Context,
@@ -43,7 +43,10 @@ class SongNotification(
             )
         }
 
-        notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        notification = NotificationCompat.Builder(
+            context,
+            CHANNEL_ID
+        )
             .setSmallIcon(R.drawable.ic_music_note)
             .setContent(remoteView)
             .setCustomBigContentView(remoteView)
@@ -72,13 +75,25 @@ class SongNotification(
                     else RESUME_SONG_ACTION
                 )
             )
+
+            setOnClickPendingIntent(
+                R.id.next_button,
+                getPendingIntent(
+                    NEXT_SONG_ACTION
+                )
+            )
         }
 
-        notificationManager?.notify(NOTIFICATION_ID, notification)
+        if (notificationManager != null && notification != null) {
+            notificationManager!!.notify(NOTIFICATION_ID, notification)
+        }
     }
 
     private fun getPendingIntent(action: String): PendingIntent {
-        val intent = Intent(context, MusicService::class.java).apply {
+        val intent = Intent(
+            context,
+            MusicService::class.java
+        ).apply {
             this.action = action
         }
         return PendingIntent.getService(

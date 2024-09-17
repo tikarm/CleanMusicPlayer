@@ -15,7 +15,11 @@ object Modules {
     const val currentSongDomain = ":features:current-song:current-song-domain"
     const val currentSongData = ":features:current-song:current-song-data"
 
-    const val player = ":player"
+    const val playerPresentation = ":player:player-presentation"
+    const val playerDomain = ":player:player-domain"
+    const val playerData = ":player:player-data"
+    const val playerInteraction = ":player:player-interaction"
+
     const val songModel = ":song-model"
     const val songUiState = ":song-ui-state"
 }

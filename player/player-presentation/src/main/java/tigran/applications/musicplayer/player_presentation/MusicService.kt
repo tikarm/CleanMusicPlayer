@@ -1,4 +1,4 @@
-package tigran.applications.musicplayer.player
+package tigran.applications.musicplayer.player_presentation
 
 import android.app.Service
 import android.content.BroadcastReceiver
@@ -8,16 +8,18 @@ import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import tigran.applications.core.SongInteractor
 import tigran.applications.musicplayer.song_model.SongModel
 
+@AndroidEntryPoint
 class MusicService : Service() {
 
     companion object {
-        const val SERVICE_NOTIFICATION_ID = 1
+        const val NOTIFICATION_ID = 1
         const val CHANNEL_ID = "music_channel_id"
 
         const val SONG_EXTRA = "SONG_EXTRA"
@@ -66,7 +68,7 @@ class MusicService : Service() {
                 if (currentSong != null) {
                     playSong(Uri.parse(currentSong!!.contentUri))
                     startForeground(
-                        SERVICE_NOTIFICATION_ID,
+                        NOTIFICATION_ID,
                         songNotification.createNotification(currentSong!!)
                     )
                 }

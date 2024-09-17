@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="tigran.applications.musicplayer.player.MusicService"
+            android:name="tigran.applications.musicplayer.player_presentation.MusicService"
             android:foregroundServiceType="mediaPlayback"
             />
     </application>

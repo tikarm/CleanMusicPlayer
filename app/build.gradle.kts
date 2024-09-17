@@ -95,7 +95,12 @@ dependencies {
     implementation(project(Modules.dataLocal))
     implementation(project(Modules.dataDevice))
     implementation(project(Modules.domain))
-    implementation(project(Modules.player))
+
+    implementation(project(Modules.playerPresentation))
+    implementation(project(Modules.playerDomain))
+    implementation(project(Modules.playerData))
+    implementation(project(Modules.playerInteraction))
+
     implementation(project(Modules.songModel))
     implementation(project(Modules.songUiState))
 

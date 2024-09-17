@@ -30,7 +30,8 @@ class SongListRepositoryImpl @Inject constructor(
             artist = artist,
             album = album,
             albumArtUri = albumArtUri,
-            contentUri = contentUri
+            contentUri = contentUri,
+            position = position
         )
     }
 }

@@ -28,4 +28,7 @@ data class SongEntity(
 
     @ColumnInfo(name = "contentUri")
     val contentUri: String,
+
+    @ColumnInfo(name = "position")
+    val position: Int,
 )

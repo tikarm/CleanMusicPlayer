@@ -56,7 +56,8 @@ class DeviceStorageDataSource @Inject constructor() {
                         album = album,
                         albumArtUri = albumArtUri,
                         filePath = data,
-                        contentUri = contentUri
+                        contentUri = contentUri,
+                        position = cursor.position
                     )
                 )
             }

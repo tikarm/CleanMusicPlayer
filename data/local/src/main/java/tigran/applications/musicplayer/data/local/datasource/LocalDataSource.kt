@@ -10,7 +10,7 @@ class LocalDataSource @Inject constructor(
 ) {
     fun getAllSongs() = songDao.getAll()
 
-    fun getSongById(id: Long) = songDao.getSongById(id)
+    fun getSongById(id: String) = songDao.getSongById(id)
 
     @Throws(DatabaseInsertionException::class)
     fun insertSong(item: SongEntity): Long {
@@ -25,5 +25,9 @@ class LocalDataSource @Inject constructor(
         songDao.insertSongs(songs)
     }
 
-    fun removeSong(id: Long) = songDao.remove(id)
+    fun getNextSong(currentSongPosition: Int) = songDao.getSongByPosition(currentSongPosition + 1)
+
+    fun getPreviousSong(currentSongPosition: Int) = songDao.getSongByPosition(currentSongPosition - 1)
+
+    fun removeSong(id: String) = songDao.remove(id)
 }
