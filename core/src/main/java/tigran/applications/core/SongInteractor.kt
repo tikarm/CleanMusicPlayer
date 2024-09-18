@@ -1,13 +1,13 @@
 package tigran.applications.core
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 object SongInteractor {
-    private val _currentPlayingSongInfo = MutableStateFlow<Pair<String, Boolean>?>(null)
-    val currentPlayingSongInfo = _currentPlayingSongInfo.asStateFlow()
+    private val _currentPlayingSongInfo = MutableSharedFlow<Pair<String, Boolean>?>(replay = 1)
+    val currentPlayingSongInfo = _currentPlayingSongInfo.asSharedFlow()
 
-    fun setSongIsPlaying(id: String, isPlaying: Boolean) {
-        _currentPlayingSongInfo.value = Pair(id, isPlaying)
+    suspend fun setSongIsPlaying(id: String, isPlaying: Boolean) {
+        _currentPlayingSongInfo.emit(Pair(id, isPlaying))
     }
 }

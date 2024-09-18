@@ -13,7 +13,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import tigran.applications.core.SongInteractor
+import tigran.applications.musicplayer.player_domain.use_cases.GetNextSongUseCase
+import tigran.applications.musicplayer.player_domain.use_cases.GetPreviousSongUseCase
 import tigran.applications.musicplayer.song_model.SongModel
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MusicService : Service() {
@@ -29,7 +32,15 @@ class MusicService : Service() {
         const val STOP_SONG_ACTION = "STOP_SONG_ACTION"
         const val PAUSE_SONG_ACTION = "PAUSE_SONG_ACTION"
         const val RESUME_SONG_ACTION = "RESUME_SONG_ACTION"
+        const val NEXT_SONG_ACTION = "NEXT_SONG_ACTION"
+        const val PREVIOUS_SONG_ACTION = "PREVIOUS_SONG_ACTION"
     }
+
+    @Inject
+    lateinit var getNextSongUseCase: GetNextSongUseCase
+
+    @Inject
+    lateinit var getPreviousSongUseCase: GetPreviousSongUseCase
 
     private var mediaPlayer = MediaPlayer()
 
@@ -42,6 +53,8 @@ class MusicService : Service() {
                 PAUSE_SONG_ACTION -> pausePlayback()
                 RESUME_SONG_ACTION -> resumePlayback()
                 STOP_SONG_ACTION -> stopPlayback()
+                NEXT_SONG_ACTION -> playNextSong()
+                PREVIOUS_SONG_ACTION -> playPreviousSong()
             }
         }
     }
@@ -54,6 +67,8 @@ class MusicService : Service() {
                 addAction(PAUSE_SONG_ACTION)
                 addAction(RESUME_SONG_ACTION)
                 addAction(STOP_SONG_ACTION)
+                addAction(NEXT_SONG_ACTION)
+                addAction(PREVIOUS_SONG_ACTION)
             }
         )
     }
@@ -84,6 +99,14 @@ class MusicService : Service() {
 
             RESUME_SONG_ACTION -> {
                 resumePlayback()
+            }
+
+            NEXT_SONG_ACTION -> {
+                playNextSong()
+            }
+
+            PREVIOUS_SONG_ACTION -> {
+                playPreviousSong()
             }
         }
 
@@ -130,6 +153,20 @@ class MusicService : Service() {
             }
         }
         setCurrentPlayingSongState(true)
+    }
+
+    private fun playNextSong() {
+        CoroutineScope(Dispatchers.IO).launch {
+            currentSong = getNextSongUseCase.invoke(currentSong!!.position)
+            playSong(Uri.parse(currentSong!!.contentUri))
+        }
+    }
+
+    private fun playPreviousSong() {
+        CoroutineScope(Dispatchers.IO).launch {
+            currentSong = getPreviousSongUseCase.invoke(currentSong!!.position)
+            playSong(Uri.parse(currentSong!!.contentUri))
+        }
     }
 
     private fun setCurrentPlayingSongState(isPlaying: Boolean) {

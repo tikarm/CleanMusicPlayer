@@ -30,6 +30,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.tigran.applications.MusicPlayer.song_list.presentation.R
 import tigran.applications.core.SongInteractor
+import tigran.applications.core.navigation.Screen
 import tigran.applications.core.util.UiEvent
 import tigran.applications.musicplayer.core_ui.theme.defaultTextColor
 import tigran.applications.musicplayer.core_ui.util.shimmerEffect
@@ -63,6 +64,7 @@ fun SongListScreen(
                     }
                     SongItem(songUiState) {
                         songListViewModel.onSongClicked(songUiState, currentPlayingSong)
+                        onNavigate(UiEvent.Navigate(Screen.CurrentSongScreen))
                     }
                 }
             }

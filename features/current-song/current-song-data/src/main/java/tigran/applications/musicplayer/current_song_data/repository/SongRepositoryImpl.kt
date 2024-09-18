@@ -11,18 +11,6 @@ class SongRepositoryImpl @Inject constructor(
 ) : SongRepository {
 
     override suspend fun getSong(id: String): SongModel {
-        return localDataSource.getSongById(id).toSongModel()
-    }
-
-    private fun SongEntity.toSongModel(): SongModel {
-        return SongModel(
-            id = id,
-            title = title,
-            artist = artist,
-            album = album,
-            albumArtUri = albumArtUri,
-            contentUri = contentUri,
-            position = position
-        )
+        return localDataSource.getSongById(id)
     }
 }

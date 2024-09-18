@@ -6,8 +6,10 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import tigran.applications.musicplayer.player_interaction.AudioPlayer
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.NEXT_SONG_ACTION
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.PAUSE_SONG_ACTION
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.PLAY_SONG_ACTION
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.PREVIOUS_SONG_ACTION
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.RESUME_SONG_ACTION
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.SONG_EXTRA
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.SONG_URI_EXTRA
@@ -42,6 +44,14 @@ class AudioPlayerImpl @Inject constructor(
 
     override fun resume() {
         sendBroadcast(RESUME_SONG_ACTION)
+    }
+
+    override fun playNextSong() {
+        sendBroadcast(NEXT_SONG_ACTION)
+    }
+
+    override fun playPreviousSong() {
+        sendBroadcast(PREVIOUS_SONG_ACTION)
     }
 
     private fun sendBroadcast(action: String) {

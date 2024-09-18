@@ -10,4 +10,8 @@ interface AudioPlayer {
     fun stop()
 
     fun resume()
+
+    fun playNextSong()
+
+    fun playPreviousSong()
 }

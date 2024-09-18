@@ -12,6 +12,7 @@ import tigran.applications.musicplayer.player_presentation.MusicService.Companio
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.NEXT_SONG_ACTION
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.NOTIFICATION_ID
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.PAUSE_SONG_ACTION
+import tigran.applications.musicplayer.player_presentation.MusicService.Companion.PREVIOUS_SONG_ACTION
 import tigran.applications.musicplayer.player_presentation.MusicService.Companion.RESUME_SONG_ACTION
 import tigran.applications.musicplayer.song_model.SongModel
 
@@ -39,6 +40,19 @@ class SongNotification(
                 R.id.play_pause_button,
                 getPendingIntent(
                     PAUSE_SONG_ACTION
+                )
+            )
+            setOnClickPendingIntent(
+                R.id.next_button,
+                getPendingIntent(
+                    NEXT_SONG_ACTION
+                )
+            )
+
+            setOnClickPendingIntent(
+                R.id.prev_button,
+                getPendingIntent(
+                    PREVIOUS_SONG_ACTION
                 )
             )
         }
@@ -73,13 +87,6 @@ class SongNotification(
                     if (isPlaying)
                         PAUSE_SONG_ACTION
                     else RESUME_SONG_ACTION
-                )
-            )
-
-            setOnClickPendingIntent(
-                R.id.next_button,
-                getPendingIntent(
-                    NEXT_SONG_ACTION
                 )
             )
         }

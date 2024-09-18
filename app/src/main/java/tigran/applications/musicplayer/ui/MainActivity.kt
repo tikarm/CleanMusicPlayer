@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import tigran.applications.core.navigation.Screen
 import tigran.applications.musicplayer.PermissionManager
 import tigran.applications.musicplayer.core_ui.theme.MusicPlayerTheme
+import tigran.applications.musicplayer.current_song_presentation.CurrentSongScreen
 import tigran.applications.musicplayer.navigation.navigate
 import tigran.applications.musicplayer.song_list_presentation.SongListScreen
 
@@ -41,6 +42,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     composable<Screen.SongListScreen> {
                         SongListScreen(onNavigate = navController::navigate)
+                    }
+                    composable<Screen.CurrentSongScreen> {
+                        CurrentSongScreen(onNavigate = navController::navigate)
                     }
                 }
             }

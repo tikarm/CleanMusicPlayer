@@ -13,7 +13,7 @@ android {
 
 dependencies {
     implementation(project(Modules.core))
-
+    implementation(project(Modules.songModel))
     implementation(Preferences.preferenceKtx)
     implementation(SecurityCrypto.securityCrypto)
     implementation(Room.roomRuntime)
