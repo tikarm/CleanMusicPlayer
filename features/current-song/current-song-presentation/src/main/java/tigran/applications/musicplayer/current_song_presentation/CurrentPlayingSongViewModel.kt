@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import tigran.applications.core.CurrentSongInfo
 import tigran.applications.musicplayer.current_song_domain.use_cases.GetSongUseCase
 import tigran.applications.musicplayer.current_song_domain.use_cases.PlayNextSongUseCase
 import tigran.applications.musicplayer.current_song_domain.use_cases.PlayPreviousSongUseCase
@@ -46,7 +47,7 @@ class CurrentPlayingSongViewModel @Inject constructor(
     }
 
     fun onPlayPauseClicked(
-        currentPlayingSongInfo: Pair<String, Boolean>?
+        currentPlayingSongInfo: CurrentSongInfo?
     ) {
         if (currentSong != null) {
             playSongUseCase.invoke(currentSong!!, currentPlayingSongInfo)

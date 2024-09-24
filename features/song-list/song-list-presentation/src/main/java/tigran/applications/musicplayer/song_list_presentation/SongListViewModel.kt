@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import tigran.applications.core.CurrentSongInfo
 import tigran.applications.musicplayer.domain.use_cases.PlaySongUseCase
 import tigran.applications.musicplayer.song_list_domain.use_cases.GetSongsUseCase
 import tigran.applications.musicplayer.song_model.SongModel
@@ -32,8 +33,8 @@ class SongListViewModel @Inject constructor(
         }
     }
 
-    fun onSongClicked(songUiState: SongUiState, currentPlayingSongInfo: Pair<String, Boolean>?) {
-        val songToPlay = songList.first { it.id == songUiState.id }
+    fun onSongClicked(id: String, currentPlayingSongInfo: CurrentSongInfo?) {
+        val songToPlay = songList.first { it.id == id }
         playSongUseCase.invoke(songToPlay, currentPlayingSongInfo)
     }
 

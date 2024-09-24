@@ -49,15 +49,15 @@ fun CurrentSongScreen(
     )
     val currentPlayingSongUiState by viewModel.songUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = currentPlayingSongInfo?.first) {
+    LaunchedEffect(key1 = currentPlayingSongInfo?.id) {
         currentPlayingSongInfo?.let {
-            viewModel.getSong(it.first)
+            viewModel.getSong(it.id)
         }
     }
 
-    LaunchedEffect(key1 = currentPlayingSongInfo?.second) {
+    LaunchedEffect(key1 = currentPlayingSongInfo?.isPlaying) {
         currentPlayingSongInfo?.let {
-            viewModel.setSongUiStateIsPlaying(it.second)
+            viewModel.setSongUiStateIsPlaying(it.isPlaying)
         }
     }
 

@@ -52,9 +52,9 @@ fun SongListScreen(
                 items(songListUiState.size) { index: Int ->
                     var songUiState = songListUiState[index]
 
-                    songUiState = if (songUiState.id == currentPlayingSong?.first) {
+                    songUiState = if (songUiState.id == currentPlayingSong?.id) {
                         songUiState.copy(
-                            isPlaying = currentPlayingSong?.second ?: false
+                            isPlaying = currentPlayingSong?.isPlaying ?: false
                         )
                     } else {
                         songUiState.copy(
@@ -62,7 +62,7 @@ fun SongListScreen(
                         )
                     }
                     SongItem(songUiState) {
-                        songListViewModel.onSongClicked(songUiState, currentPlayingSong)
+                        songListViewModel.onSongClicked(songUiState.id, currentPlayingSong)
                     }
                 }
             }
