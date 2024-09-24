@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,10 +18,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,8 +39,10 @@ import tigran.applications.musicplayer.song_ui_state.SongUiState
 
 @Composable
 fun CurrentSongScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: CurrentPlayingSongViewModel = hiltViewModel(),
+    onNavigate: (UiEvent.Navigate) -> Unit,
+    onMiniPlayerClicked: () -> Unit,
+    getSheetFraction: () -> Float,
 ) {
     val currentPlayingSongInfo by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle(
         null
@@ -57,36 +62,51 @@ fun CurrentSongScreen(
     }
 
     if (currentPlayingSongUiState != null) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            currentPlayingSongUiState?.albumArtUri?.let {
-                SongArt(
-                    artUri = it
-                )
-            }
-
-            PlaybackContent(
+        Box(Modifier.alpha(1f - getSheetFraction())) {
+            MiniPlayer(
                 songUiState = currentPlayingSongUiState!!,
-            )
-
-            PlaybackButtons(
-                songUiState = currentPlayingSongUiState!!,
+                onContentClicked = {
+                    onMiniPlayerClicked()
+                },
                 onPlayPauseClicked = {
                     viewModel.onPlayPauseClicked(currentPlayingSongInfo)
                 },
-                onNextSongClicked = viewModel::playNextSong,
-                onPreviousSongClicked = viewModel::playPreviousSong
             )
+        }
+        Box(modifier = Modifier.alpha(getSheetFraction())) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                currentPlayingSongUiState?.albumArtUri?.let {
+                    SongArt(
+                        size = 360.dp,
+                        artUri = it
+                    )
+                }
+
+                PlaybackContent(
+                    songUiState = currentPlayingSongUiState!!,
+                )
+
+                PlaybackButtons(
+                    songUiState = currentPlayingSongUiState!!,
+                    onPlayPauseClicked = {
+                        viewModel.onPlayPauseClicked(currentPlayingSongInfo)
+                    },
+                    onNextSongClicked = viewModel::playNextSong,
+                    onPreviousSongClicked = viewModel::playPreviousSong
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun SongArt(
-    artUri: String
+    size: Dp,
+    artUri: String?
 ) {
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
@@ -95,7 +115,7 @@ private fun SongArt(
         contentDescription = "",
         modifier = Modifier
             .padding(4.dp)
-            .size(360.dp)
+            .size(size)
             .clip(RoundedCornerShape(4.dp)),
         contentScale = ContentScale.Crop,
         loading = {
@@ -176,5 +196,54 @@ private fun PlaybackButtons(
             painter = painterResource(id = R.drawable.ic_skip_next),
             contentDescription = null
         )
+    }
+}
+
+@Composable
+private fun MiniPlayer(
+    songUiState: SongUiState,
+    onContentClicked: () -> Unit,
+    onPlayPauseClicked: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.clickable {
+            onContentClicked()
+        }
+    ) {
+        SongArt(size = 48.dp, artUri = songUiState.albumArtUri)
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+        ) {
+            Text(
+                text = songUiState.title,
+                fontSize = 17.sp,
+            )
+
+            if (songUiState.artist != null) {
+                Text(
+                    text = songUiState.artist!!,
+                    fontSize = 14.sp,
+                    color = defaultTextColor
+                )
+            }
+        }
+
+        if (songUiState.isPlaying != null) {
+            Spacer(modifier = Modifier.weight(1f))
+            Image(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 6.dp)
+                    .clickable {
+                        onPlayPauseClicked()
+                    },
+                painter = if (songUiState.isPlaying!!)
+                    painterResource(id = R.drawable.ic_pause) else
+                    painterResource(id = R.drawable.ic_play),
+                contentDescription = null
+            )
+        }
     }
 }

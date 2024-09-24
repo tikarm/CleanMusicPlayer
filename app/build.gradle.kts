@@ -84,6 +84,10 @@ dependencies {
     implementation(project(Modules.core))
     implementation(project(Modules.coreUi))
 
+    implementation(project(Modules.mainScreenPresentation))
+    implementation(project(Modules.mainScreenData))
+    implementation(project(Modules.mainScreenDomain))
+
     implementation(project(Modules.songListPresentation))
     implementation(project(Modules.songListData))
     implementation(project(Modules.songListDomain))

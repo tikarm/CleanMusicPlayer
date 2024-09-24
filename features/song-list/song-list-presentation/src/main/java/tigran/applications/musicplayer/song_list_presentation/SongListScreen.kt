@@ -30,7 +30,6 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.tigran.applications.MusicPlayer.song_list.presentation.R
 import tigran.applications.core.SongInteractor
-import tigran.applications.core.navigation.Screen
 import tigran.applications.core.util.UiEvent
 import tigran.applications.musicplayer.core_ui.theme.defaultTextColor
 import tigran.applications.musicplayer.core_ui.util.shimmerEffect
@@ -39,8 +38,8 @@ import tigran.applications.musicplayer.song_ui_state.SongUiState
 
 @Composable
 fun SongListScreen(
-    onNavigate: (UiEvent.Navigate) -> Unit,
     songListViewModel: SongListViewModel = hiltViewModel(),
+    onNavigate: (UiEvent.Navigate) -> Unit,
 ) {
     val songListUiState by songListViewModel.songListUiState.collectAsStateWithLifecycle()
     val currentPlayingSong by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle(null)
@@ -64,7 +63,6 @@ fun SongListScreen(
                     }
                     SongItem(songUiState) {
                         songListViewModel.onSongClicked(songUiState, currentPlayingSong)
-                        onNavigate(UiEvent.Navigate(Screen.CurrentSongScreen))
                     }
                 }
             }
@@ -123,7 +121,9 @@ fun SongItem(
         if (songUiState.isPlaying != null) {
             Spacer(modifier = Modifier.weight(1f))
             Image(
-                modifier = Modifier.align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 6.dp),
                 painter = if (songUiState.isPlaying!!)
                     painterResource(id = R.drawable.ic_pause) else
                     painterResource(id = R.drawable.ic_play),

@@ -171,7 +171,7 @@ class MusicService : Service() {
 
     private fun setCurrentPlayingSongState(isPlaying: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
-            SongInteractor.setSongIsPlaying(currentSong?.id!!, isPlaying)
+            SongInteractor.setCurrentSongInfo(currentSong?.id!!, isPlaying)
             songNotification.updateNotification(currentSong!!, isPlaying)
         }
     }

@@ -7,6 +7,10 @@ object Modules {
     const val dataDevice = ":data:device"
     const val domain = ":domain"
 
+    const val mainScreenPresentation = ":features:main-screen:main-screen-presentation"
+    const val mainScreenDomain = ":features:main-screen:main-screen-domain"
+    const val mainScreenData = ":features:main-screen:main-screen-data"
+
     const val songListPresentation = ":features:song-list:song-list-presentation"
     const val songListDomain = ":features:song-list:song-list-domain"
     const val songListData = ":features:song-list:song-list-data"

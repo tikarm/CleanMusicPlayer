@@ -8,4 +8,7 @@ sealed class Screen {
 
     @Serializable
     data object CurrentSongScreen : Screen()
+
+    @Serializable
+    data object MainScreen : Screen()
 }
