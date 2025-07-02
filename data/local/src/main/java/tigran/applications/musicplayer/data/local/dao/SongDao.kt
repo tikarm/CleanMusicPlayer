@@ -16,7 +16,7 @@ interface SongDao {
     fun getSongById(id: String): SongEntity
 
     @Query("SELECT * FROM songs WHERE position =:position")
-    fun getSongByPosition(position: Int): SongEntity
+    fun getSongByPosition(position: Int): SongEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(song: SongEntity): Long

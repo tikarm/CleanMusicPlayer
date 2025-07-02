@@ -13,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import tigran.applications.core.SongInteractor
+import tigran.applications.musicplayer.player_domain.exceptions.CannotGetSongException
 import tigran.applications.musicplayer.player_domain.use_cases.GetNextSongUseCase
 import tigran.applications.musicplayer.player_domain.use_cases.GetPreviousSongUseCase
 import tigran.applications.musicplayer.song_model.SongModel
@@ -61,7 +62,9 @@ class MusicService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        registerReceiver(musicActionReceiver,
+
+        registerReceiver(
+            musicActionReceiver,
             IntentFilter().apply {
                 addAction(PLAY_SONG_ACTION)
                 addAction(PAUSE_SONG_ACTION)
@@ -69,7 +72,8 @@ class MusicService : Service() {
                 addAction(STOP_SONG_ACTION)
                 addAction(NEXT_SONG_ACTION)
                 addAction(PREVIOUS_SONG_ACTION)
-            }
+            },
+            Context.RECEIVER_NOT_EXPORTED
         )
     }
 
@@ -157,15 +161,21 @@ class MusicService : Service() {
 
     private fun playNextSong() {
         CoroutineScope(Dispatchers.IO).launch {
-            currentSong = getNextSongUseCase.invoke(currentSong!!.position)
-            playSong(Uri.parse(currentSong!!.contentUri))
+            try {
+                currentSong = getNextSongUseCase.invoke(currentSong!!.position)
+                playSong(Uri.parse(currentSong!!.contentUri))
+            } catch (_: CannotGetSongException) {
+            }
         }
     }
 
     private fun playPreviousSong() {
         CoroutineScope(Dispatchers.IO).launch {
-            currentSong = getPreviousSongUseCase.invoke(currentSong!!.position)
-            playSong(Uri.parse(currentSong!!.contentUri))
+            try {
+                currentSong = getPreviousSongUseCase.invoke(currentSong!!.position)
+                playSong(Uri.parse(currentSong!!.contentUri))
+            } catch (_: CannotGetSongException) {
+            }
         }
     }
 
