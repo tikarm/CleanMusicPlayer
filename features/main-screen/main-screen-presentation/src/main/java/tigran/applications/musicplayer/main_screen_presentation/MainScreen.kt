@@ -40,6 +40,11 @@ fun MainScreen(
                             scaffoldState.bottomSheetState.expand()
                         }
                     },
+                    onCollapseClicked = {
+                        coroutineScope.launch {
+                            scaffoldState.bottomSheetState.collapse()
+                        }
+                    },
                     onNavigate = onNavigate
                 )
             }

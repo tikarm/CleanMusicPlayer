@@ -42,6 +42,7 @@ fun CurrentSongScreen(
     viewModel: CurrentPlayingSongViewModel = hiltViewModel(),
     onNavigate: (UiEvent.Navigate) -> Unit,
     onMiniPlayerClicked: () -> Unit,
+    onCollapseClicked: () -> Unit,
     getSheetFraction: () -> Float,
 ) {
     val currentPlayingSongInfo by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle(
@@ -74,6 +75,17 @@ fun CurrentSongScreen(
             )
         }
         Box(modifier = Modifier.alpha(getSheetFraction())) {
+            Image(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(32.dp)
+                    .clickable {
+                        onCollapseClicked()
+                    },
+                alignment = Alignment.TopStart,
+                painter = painterResource(id = R.drawable.ic_arrow_drop_down),
+                contentDescription = null
+            )
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
