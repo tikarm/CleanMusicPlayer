@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import tigran.applications.core.CurrentSongInfo
 import tigran.applications.musicplayer.domain.use_cases.PlaySongUseCase
 import tigran.applications.musicplayer.song_list_domain.use_cases.GetSongsUseCase
@@ -23,21 +25,22 @@ class SongListViewModel @Inject constructor(
 
     private var songList: List<SongModel> = emptyList()
 
-    private val _songListUiState = MutableStateFlow(SongListUiState())
-    val songListUiState = _songListUiState.asStateFlow()
-
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            _songListUiState.value = SongListUiState(
-                isLoading = true
-            )
-            songList = getSongsUseCase.invoke()
-            _songListUiState.value = _songListUiState.value.copy(
+    val songListUiState: StateFlow<SongListUiState> = flow {
+        emit(SongListUiState(isLoading = true))
+        songList = withContext(Dispatchers.IO) {
+            getSongsUseCase.invoke()
+        }
+        emit(
+            SongListUiState(
                 isLoading = false,
                 songList = songList.map { it.toSongUiState() }
             )
-        }
-    }
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = SongListUiState()
+    )
 
     fun onSongClicked(id: String, currentPlayingSongInfo: CurrentSongInfo?) {
         val songToPlay = songList.first { it.id == id }

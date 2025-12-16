@@ -4,10 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import tigran.applications.core.CurrentSongInfo
+import tigran.applications.core.SongInteractor
 import tigran.applications.musicplayer.current_song_domain.use_cases.GetSongUseCase
 import tigran.applications.musicplayer.current_song_domain.use_cases.PlayNextSongUseCase
 import tigran.applications.musicplayer.current_song_domain.use_cases.PlayPreviousSongUseCase
@@ -24,19 +28,22 @@ class CurrentPlayingSongViewModel @Inject constructor(
     private val playPreviousSongUseCase: PlayPreviousSongUseCase,
 ) : ViewModel() {
 
-    private val _songUiState = MutableStateFlow<SongUiState?>(null)
-    val songUiState = _songUiState.asStateFlow()
-
     private var currentSong: SongModel? = null
 
-    fun getSong(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            currentSong = getSongUseCase.invoke(id)
-            _songUiState.value = currentSong?.toSongUiState()?.apply {
-                isPlaying = true
+    val songUiState: StateFlow<SongUiState?> = SongInteractor.currentPlayingSongInfo
+        .filterNotNull()
+        .mapLatest { songInfo ->
+            val song = withContext(Dispatchers.IO) {
+                getSongUseCase.invoke(songInfo.id)
             }
+            currentSong = song
+            song.toSongUiState().copy(isPlaying = songInfo.isPlaying)
         }
-    }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
 
     fun playNextSong() {
         playNextSongUseCase.invoke()
@@ -46,18 +53,16 @@ class CurrentPlayingSongViewModel @Inject constructor(
         playPreviousSongUseCase.invoke()
     }
 
-    fun onPlayPauseClicked(
-        currentPlayingSongInfo: CurrentSongInfo?
-    ) {
+    fun onPlayPauseClicked() {
         if (currentSong != null) {
-            playSongUseCase.invoke(currentSong!!, currentPlayingSongInfo)
+            playSongUseCase.invoke(
+                selectedSongModel = currentSong!!,
+                currentPlayingSongInfo = CurrentSongInfo(
+                    id = songUiState.value!!.id,
+                    isPlaying = songUiState.value?.isPlaying == true
+                )
+            )
         }
-    }
-
-    fun setSongUiStateIsPlaying(isPlaying: Boolean) {
-        _songUiState.value = _songUiState.value?.copy(
-            isPlaying = isPlaying
-        )
     }
 
     private fun SongModel.toSongUiState(): SongUiState {

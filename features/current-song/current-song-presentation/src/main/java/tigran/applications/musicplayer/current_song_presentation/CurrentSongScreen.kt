@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.tigran.applications.MusicPlayer.current_song.presentation.R
-import tigran.applications.core.SongInteractor
 import tigran.applications.core.util.UiEvent
 import tigran.applications.musicplayer.core_ui.theme.defaultTextColor
 import tigran.applications.musicplayer.core_ui.util.shimmerEffect
@@ -45,22 +43,7 @@ fun CurrentSongScreen(
     onCollapseClicked: () -> Unit,
     getSheetFraction: () -> Float,
 ) {
-    val currentPlayingSongInfo by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle(
-        null
-    )
     val currentPlayingSongUiState by viewModel.songUiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(key1 = currentPlayingSongInfo?.id) {
-        currentPlayingSongInfo?.let {
-            viewModel.getSong(it.id)
-        }
-    }
-
-    LaunchedEffect(key1 = currentPlayingSongInfo?.isPlaying) {
-        currentPlayingSongInfo?.let {
-            viewModel.setSongUiStateIsPlaying(it.isPlaying)
-        }
-    }
 
     if (currentPlayingSongUiState != null) {
         Box(Modifier.alpha(1f - getSheetFraction())) {
@@ -70,7 +53,7 @@ fun CurrentSongScreen(
                     onMiniPlayerClicked()
                 },
                 onPlayPauseClicked = {
-                    viewModel.onPlayPauseClicked(currentPlayingSongInfo)
+                    viewModel.onPlayPauseClicked()
                 },
             )
         }
@@ -105,7 +88,7 @@ fun CurrentSongScreen(
                 PlaybackButtons(
                     songUiState = currentPlayingSongUiState!!,
                     onPlayPauseClicked = {
-                        viewModel.onPlayPauseClicked(currentPlayingSongInfo)
+                        viewModel.onPlayPauseClicked()
                     },
                     onNextSongClicked = viewModel::playNextSong,
                     onPreviousSongClicked = viewModel::playPreviousSong
@@ -227,23 +210,28 @@ private fun MiniPlayer(
         Column(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
+                .weight(1f)
+                .padding(end = 8.dp)
         ) {
             Text(
                 text = songUiState.title,
                 fontSize = 17.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             if (songUiState.artist != null) {
                 Text(
                     text = songUiState.artist!!,
                     fontSize = 14.sp,
-                    color = defaultTextColor
+                    color = defaultTextColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
 
         if (songUiState.isPlaying != null) {
-            Spacer(modifier = Modifier.weight(1f))
             Image(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -118,20 +118,25 @@ fun SongItem(
         Column(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
+                .weight(1f)
+                .padding(end = 8.dp)
         ) {
             Text(
                 text = songUiState.title,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
                 text = songUiState.artist ?: "",
                 color = defaultTextColor,
-                fontSize = 14.sp
+                fontSize = 14.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
         if (songUiState.isPlaying != null) {
-            Spacer(modifier = Modifier.weight(1f))
             Image(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
