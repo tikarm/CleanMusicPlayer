@@ -23,13 +23,19 @@ class SongListViewModel @Inject constructor(
 
     private var songList: List<SongModel> = emptyList()
 
-    private val _songListUiState = MutableStateFlow(listOf<SongUiState>())
+    private val _songListUiState = MutableStateFlow(SongListUiState())
     val songListUiState = _songListUiState.asStateFlow()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            _songListUiState.value = SongListUiState(
+                isLoading = true
+            )
             songList = getSongsUseCase.invoke()
-            _songListUiState.value = songList.map { it.toSongUiState() }
+            _songListUiState.value = _songListUiState.value.copy(
+                isLoading = false,
+                songList = songList.map { it.toSongUiState() }
+            )
         }
     }
 
@@ -47,4 +53,9 @@ class SongListViewModel @Inject constructor(
             albumArtUri = albumArtUri
         )
     }
+
+    data class SongListUiState(
+        val isLoading: Boolean = false,
+        val songList: List<SongUiState> = emptyList()
+    )
 }

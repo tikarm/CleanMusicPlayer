@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,12 +46,12 @@ fun SongListScreen(
     val currentPlayingSong by SongInteractor.currentPlayingSongInfo.collectAsStateWithLifecycle(null)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (songListUiState.isEmpty()) {
+        if (songListUiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        } else {
+        } else if (songListUiState.songList.isNotEmpty()) {
             LazyColumn {
-                items(songListUiState.size) { index: Int ->
-                    var songUiState = songListUiState[index]
+                items(songListUiState.songList.size) { index: Int ->
+                    var songUiState = songListUiState.songList[index]
 
                     songUiState = if (songUiState.id == currentPlayingSong?.id) {
                         songUiState.copy(
@@ -65,6 +66,17 @@ fun SongListScreen(
                         songListViewModel.onSongClicked(songUiState.id, currentPlayingSong)
                     }
                 }
+            }
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Cannot find songs in Media",
+                    fontSize = 26.sp,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
         }
     }
